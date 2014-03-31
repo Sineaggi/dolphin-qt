@@ -166,13 +166,19 @@ void Host_UpdateMainFrame()
 
 }
 
-void Host_UpdateTitle(const char* title)
+// FIXME: Properly port to qt
+//void Host_UpdateTitle(const char* title)
+void Host_UpdateTitle(const std::string& title)
 {
 	// TODO: Doesn't work perfectly with render to main, yet.
-	if (SConfig::GetInstance().m_LocalCoreStartupParameter.bRenderToMain)
-		mainWindow->setWindowTitle(QString(title));
-	else
-		mainWindow->GetRenderWindow()->setWindowTitle(QString(title));
+	if (SConfig::GetInstance().m_LocalCoreStartupParameter.bRenderToMain) {
+		// mainWindow->setWindowTitle(QString(title));
+		mainWindow->setWindowTitle(QString::fromStdString(title));
+	}
+	else {
+		// mainWindow->GetRenderWindow()->setWindowTitle(QString(title));
+		mainWindow->GetRenderWindow()->setWindowTitle(QString::fromStdString(title));
+	}
 }
 
 void Host_UpdateDisasmDialog()
@@ -217,7 +223,7 @@ void Host_SetWaitCursor(bool enable)
 }
 
 
-void Host_UpdateStatusBar(const char* _pText, int Filed = 0)
+void Host_UpdateStatusBar(const std::string& text, int Field)
 {
 }
 

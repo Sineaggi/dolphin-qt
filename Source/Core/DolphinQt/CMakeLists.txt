@@ -19,6 +19,10 @@ set(SRCS Src/Config/ConfigAudio.cpp
         Src/RenderWidget.cpp
         Src/SystemInfo.cpp)
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set(SRCS ${SRCS} Src/GLInterface/AGL.cpp)
+endif()
+
 set(LIBS    core
             ${LZO}
             discio
@@ -113,17 +117,33 @@ else()
 	endif()
 endif()
 
-if(SDL2_FOUND)
-	# Using shared SDL2
-	set(LIBS	${LIBS} ${SDL2_LIBRARY})
-else(SDL2_FOUND)
-	if(SDL_FOUND)
-		# Using shared SDL
-		set(LIBS	${LIBS} ${SDL_LIBRARY})
-	else(SDL_FOUND)
-		# Using static SDL from Externals
-		set(LIBS	${LIBS} SDL)
+if(NOT ANDROID)
+	if(USE_X11)
+	  set(LIBS  ${LIBS} ${X11_LIBRARIES}
+              ${XINPUT2_LIBRARIES}
+	      ${XRANDR_LIBRARIES})
 	endif()
+	if(USE_WAYLAND)
+	  set(LIBS  ${LIBS} ${WAYLAND_LIBRARIES}
+		${XKBCOMMON_LIBRARIES})
+	endif()
+
+	link_directories(${CMAKE_PREFIX_PATH}/lib)
+
+	if(SDL2_FOUND)
+		# Using shared SDL2
+		set(LIBS	${LIBS} ${SDL2_LIBRARY})
+	else(SDL2_FOUND)
+		if(SDL_FOUND)
+			# Using shared SDL
+			set(LIBS	${LIBS} ${SDL_LIBRARY})
+		else(SDL_FOUND)
+			# Using static SDL from Externals
+			set(LIBS	${LIBS} SDL)
+		endif()
+	endif()
+else()
+	set(LIBS ${LIBS} png iconv)
 endif()
 
 set(EXEGUI dolphin-emu-qt)
