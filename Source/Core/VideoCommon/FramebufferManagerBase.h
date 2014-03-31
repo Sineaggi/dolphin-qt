@@ -1,10 +1,8 @@
-
-#ifndef _FRAMEBUFFERMANAGERBASE_H
-#define _FRAMEBUFFERMANAGERBASE_H
+#pragma once
 
 #include <list>
 
-#include "VideoCommon.h"
+#include "VideoCommon/VideoCommon.h"
 
 inline bool addrRangesOverlap(u32 aLower, u32 aUpper, u32 bLower, u32 bUpper)
 {
@@ -15,7 +13,7 @@ struct XFBSourceBase
 {
 	virtual ~XFBSourceBase() {}
 
-	virtual void Draw(const MathUtil::Rectangle<float> &sourcerc,
+	virtual void Draw(const MathUtil::Rectangle<int> &sourcerc,
 		const MathUtil::Rectangle<float> &drawrc) const = 0;
 
 	virtual void DecodeToTexture(u32 xfbAddr, u32 fbWidth, u32 fbHeight) = 0;
@@ -60,7 +58,7 @@ public:
 protected:
 	struct VirtualXFB
 	{
-		VirtualXFB() : xfbSource(NULL) {}
+		VirtualXFB() : xfbSource(nullptr) {}
 
 		// Address and size in GameCube RAM
 		u32 xfbAddr;
@@ -98,5 +96,3 @@ private:
 };
 
 extern FramebufferManagerBase *g_framebuffer_manager;
-
-#endif

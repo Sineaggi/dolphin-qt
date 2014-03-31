@@ -2,57 +2,51 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#ifndef STREAMBUFFER_H
-#define STREAMBUFFER_H
+#pragma once
 
-#include "VideoCommon.h"
-#include "FramebufferManager.h"
-#include "GLUtil.h"
-
-// glew < 1.8 doesn't support pinned memory
-#ifndef GLEW_AMD_pinned_memory
-#define GLEW_AMD_pinned_memory glewIsSupported("GL_AMD_pinned_memory")
-#define GL_EXTERNAL_VIRTUAL_MEMORY_BUFFER_AMD 0x9160
-#endif
+#include <utility>
+#include "VideoBackends/OGL/FramebufferManager.h"
+#include "VideoBackends/OGL/GLUtil.h"
+#include "VideoCommon/VideoCommon.h"
 
 namespace OGL
 {
-enum StreamType {
-	MAP_AND_ORPHAN = (1 << 1),
-	MAP_AND_SYNC = (1 << 2),
-	PINNED_MEMORY = (1 << 3),
-	BUFFERSUBDATA = (1 << 4),
-	BUFFERDATA = (1 << 5),
-	BUFFERSTORAGE = (1 << 6),
-};
 
 class StreamBuffer {
 
 public:
+	static StreamBuffer* Create(u32 type, size_t size);
+	virtual ~StreamBuffer();
+
+	/* This mapping function will return a pair of:
+	 * - the pointer to the mapped buffer
+	 * - the offset into the real gpu buffer (always multiple of stride)
+	 * On mapping, the maximum of size for allocation has to be set.
+	 * The size really pushed into this fifo only has to be known on Unmapping.
+	 * Mapping invalidates the current buffer content,
+	 * so it isn't allowed to access the old content any more.
+	 */
+	virtual std::pair<u8*, size_t> Map(size_t size, u32 stride = 0) = 0;
+	virtual void Unmap(size_t used_size) = 0;
+
+	const u32 m_buffer;
+
+protected:
 	StreamBuffer(u32 type, size_t size);
-	~StreamBuffer();
-
-	void Alloc(size_t size, u32 stride = 0);
-	size_t Upload(u8 *data, size_t size);
-
-	u32 getBuffer() { return m_buffer; }
-
-private:
-	void Init();
-	void Shutdown();
+	void CreateFences();
 	void DeleteFences();
+	void AllocMemory(size_t size);
+	void Align(u32 stride);
 
-	StreamType m_uploadtype;
-	u32 m_buffer;
-	u32 m_buffertype;
-	size_t m_size;
-	u8 *pointer;
+	const u32 m_buffertype;
+	const size_t m_size;
+
 	size_t m_iterator;
 	size_t m_used_iterator;
 	size_t m_free_iterator;
+
+private:
 	GLsync *fences;
 };
 
 }
-
-#endif // STREAMBUFFER_H

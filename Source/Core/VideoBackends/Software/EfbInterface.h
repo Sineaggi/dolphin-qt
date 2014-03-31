@@ -2,14 +2,28 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#ifndef _EFB_INTERFACE_H_
-#define _EFB_INTERFACE_H_
+#pragma once
 
-#include "VideoCommon.h"
+#include "VideoCommon/VideoCommon.h"
 
 namespace EfbInterface
 {
 	const int DEPTH_BUFFER_START = EFB_WIDTH * EFB_HEIGHT * 3;
+
+	// xfb color format - packed so the compiler doesn't mess with alignment
+#pragma pack(push,1)
+	typedef struct {
+		u8 Y;
+		u8 UV;
+	} yuv422_packed;
+#pragma pack(pop)
+
+	// But this struct is only used internally, so we could optimise alignment
+	typedef struct {
+		u8 Y;
+		s8 U;
+		s8 V;
+	} yuv444;
 
 	enum { ALP_C, BLU_C, GRN_C, RED_C };
 
@@ -28,13 +42,13 @@ namespace EfbInterface
 	void SetDepth(u16 x, u16 y, u32 depth);
 
 	void GetColor(u16 x, u16 y, u8 *color);
+	void GetColorYUV(u16 x, u16 y, yuv444 *color);
 	u32 GetDepth(u16 x, u16 y);
 
 	u8* GetPixelPointer(u16 x, u16 y, bool depth);
 
-	void UpdateColorTexture();
-	extern u8 efbColorTexture[EFB_WIDTH*EFB_HEIGHT*4]; // RGBA format
+	void CopyToXFB(yuv422_packed* xfb_in_ram, u32 fbWidth, u32 fbHeight, const EFBRectangle& sourceRc, float Gamma);
+	void BypassXFB(u8* texture, u32 fbWidth, u32 fbHeight, const EFBRectangle& sourceRc, float Gamma);
+
 	void DoState(PointerWrap &p);
 }
-
-#endif

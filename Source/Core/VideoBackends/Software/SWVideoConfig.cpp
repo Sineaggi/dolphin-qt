@@ -2,9 +2,9 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#include "FileUtil.h"
-#include "IniFile.h"
-#include "SWVideoConfig.h"
+#include "Common/FileUtil.h"
+#include "Common/IniFile.h"
+#include "VideoBackends/Software/SWVideoConfig.h"
 
 SWVideoConfig g_SWVideoConfig;
 
@@ -15,6 +15,7 @@ SWVideoConfig::SWVideoConfig()
 	renderToMainframe = false;
 
 	bHwRasterizer = false;
+	bBypassXFB = false;
 
 	bShowStats = false;
 
@@ -41,6 +42,7 @@ void SWVideoConfig::Load(const char* ini_file)
 	iniFile.Get("Hardware", "RenderToMainframe", &renderToMainframe, false);
 
 	iniFile.Get("Rendering", "HwRasterizer", &bHwRasterizer, false);
+	iniFile.Get("Rendering", "BypassXFB", &bBypassXFB, false);
 	iniFile.Get("Rendering", "ZComploc", &bZComploc, true);
 	iniFile.Get("Rendering", "ZFreeze", &bZFreeze, true);
 
@@ -65,6 +67,7 @@ void SWVideoConfig::Save(const char* ini_file)
 	iniFile.Set("Hardware", "RenderToMainframe", renderToMainframe);
 
 	iniFile.Set("Rendering", "HwRasterizer", bHwRasterizer);
+	iniFile.Set("Rendering", "BypassXFB", bBypassXFB);
 	iniFile.Set("Rendering", "ZComploc", bZComploc);
 	iniFile.Set("Rendering", "ZFreeze", bZFreeze);
 

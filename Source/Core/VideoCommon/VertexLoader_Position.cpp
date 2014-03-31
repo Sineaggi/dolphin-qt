@@ -4,12 +4,13 @@
 
 #include <limits>
 
-#include "Common.h"
-#include "VideoCommon.h"
-#include "VertexLoader.h"
-#include "VertexLoader_Position.h"
-#include "VertexManagerBase.h"
-#include "CPUDetect.h"
+#include "Common/Common.h"
+#include "Common/CPUDetect.h"
+
+#include "VideoCommon/VertexLoader.h"
+#include "VideoCommon/VertexLoader_Position.h"
+#include "VideoCommon/VertexManagerBase.h"
+#include "VideoCommon/VideoCommon.h"
 
 extern float posScale;
 extern TVtxAttr *pVtxAttr;
@@ -61,13 +62,13 @@ MOVUPS(MOffset(EDI, 0), XMM0);
 									 */
 
 template <typename T>
-float PosScale(T val)
+float PosScale(T val, float scale)
 {
-	return val * posScale;
+	return val * scale;
 }
 
 template <>
-float PosScale(float val)
+float PosScale(float val, float scale)
 {
 	return val;
 }
@@ -76,9 +77,12 @@ template <typename T, int N>
 void LOADERDECL Pos_ReadDirect()
 {
 	static_assert(N <= 3, "N > 3 is not sane!");
+	auto const scale = posScale;
+	DataWriter dst;
+	DataReader src;
 
 	for (int i = 0; i < 3; ++i)
-		DataWrite(i<N ? PosScale(DataRead<T>()) : 0.f);
+		dst.Write(i<N ? PosScale(src.Read<T>(), scale) : 0.f);
 
 	LOG_VTX();
 }
@@ -91,9 +95,11 @@ void LOADERDECL Pos_ReadIndex()
 
 	auto const index = DataRead<I>();
 	auto const data = reinterpret_cast<const T*>(cached_arraybases[ARRAY_POSITION] + (index * arraystrides[ARRAY_POSITION]));
+	auto const scale = posScale;
+	DataWriter dst;
 
 	for (int i = 0; i < 3; ++i)
-		DataWrite(i<N ? PosScale(Common::FromBigEndian(data[i])) : 0.f);
+		dst.Write(i<N ? PosScale(Common::FromBigEndian(data[i]), scale) : 0.f);
 
 	LOG_VTX();
 }
@@ -117,11 +123,11 @@ void LOADERDECL Pos_ReadIndex_Float_SSSE3()
 
 static TPipelineFunction tableReadPosition[4][8][2] = {
 	{
-		{NULL, NULL,},
-		{NULL, NULL,},
-		{NULL, NULL,},
-		{NULL, NULL,},
-		{NULL, NULL,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
 	},
 	{
 		{Pos_ReadDirect<u8, 2>, Pos_ReadDirect<u8, 3>,},

@@ -2,10 +2,9 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#ifndef _DATAREADER_H
-#define _DATAREADER_H
+#pragma once
 
-#include "VertexManagerBase.h"
+#include "VideoCommon/VertexManagerBase.h"
 
 extern u8* g_pVideoData;
 
@@ -55,6 +54,22 @@ __forceinline T DataRead()
 	DataSkip<sizeof(T)>();
 	return result;
 }
+
+class DataReader
+{
+public:
+	inline DataReader() : buffer(g_pVideoData), offset(0) {}
+	inline ~DataReader() { g_pVideoData += offset; }
+	template <typename T> inline T Read()
+	{
+		const T result = Common::FromBigEndian(*(T*)(buffer + offset));
+		offset += sizeof(T);
+		return result;
+	}
+private:
+	u8 *buffer;
+	int offset;
+};
 
 // TODO: kill these
 __forceinline u8 DataReadU8()
@@ -139,4 +154,17 @@ __forceinline void DataWrite(T data)
 	VertexManager::s_pCurBufferPointer += sizeof(T);
 }
 
-#endif
+class DataWriter
+{
+public:
+	inline DataWriter() : buffer(VertexManager::s_pCurBufferPointer), offset(0) {}
+	inline ~DataWriter() { VertexManager::s_pCurBufferPointer += offset; }
+	template <typename T> inline void Write(T data)
+	{
+		*(T*)(buffer+offset) = data;
+		offset += sizeof(T);
+	}
+private:
+	u8 *buffer;
+	int offset;
+};

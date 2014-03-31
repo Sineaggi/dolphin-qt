@@ -2,11 +2,10 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#ifndef _DSOUNDSTREAM_H_
-#define _DSOUNDSTREAM_H_
+#pragma once
 
-#include "SoundStream.h"
-#include "Thread.h"
+#include "AudioCommon/SoundStream.h"
+#include "Common/Thread.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -16,7 +15,7 @@
 #define BUFSIZE (1024 * 8 * 4)
 #endif
 
-class DSound : public SoundStream
+class DSound final : public SoundStream
 {
 #ifdef _WIN32
 	std::thread thread;
@@ -66,7 +65,6 @@ public:
 	virtual void Stop();
 	virtual void Clear(bool mute);
 	static bool isValid() { return true; }
-	virtual bool usesMixer() const { return true; }
 	virtual void Update();
 
 #else
@@ -76,5 +74,3 @@ public:
 	{}
 #endif
 };
-
-#endif //_DSOUNDSTREAM_H_

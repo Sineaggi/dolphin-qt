@@ -4,20 +4,21 @@
 
 #include <cmath>
 
-#include "VideoConfig.h"
-#include "Statistics.h"
-#include "RenderBase.h"
-#include "VideoCommon.h"
-#include "PixelShaderManager.h"
-#include "PixelEngine.h"
-#include "BPFunctions.h"
-#include "BPStructs.h"
-#include "TextureDecoder.h"
-#include "VertexLoader.h"
-#include "VertexShaderManager.h"
-#include "Thread.h"
-#include "HW/Memmap.h"
-#include "PerfQueryBase.h"
+#include "Common/Thread.h"
+#include "Core/HW/Memmap.h"
+
+#include "VideoCommon/BPFunctions.h"
+#include "VideoCommon/BPStructs.h"
+#include "VideoCommon/PerfQueryBase.h"
+#include "VideoCommon/PixelEngine.h"
+#include "VideoCommon/PixelShaderManager.h"
+#include "VideoCommon/RenderBase.h"
+#include "VideoCommon/Statistics.h"
+#include "VideoCommon/TextureDecoder.h"
+#include "VideoCommon/VertexLoader.h"
+#include "VideoCommon/VertexShaderManager.h"
+#include "VideoCommon/VideoCommon.h"
+#include "VideoCommon/VideoConfig.h"
 
 using namespace BPFunctions;
 
@@ -65,17 +66,17 @@ void BPWritten(const BPCmd& bp)
 
 	if (((s32*)&bpmem)[bp.address] == bp.newvalue)
 	{
-		if (!(bp.address == BPMEM_TRIGGER_EFB_COPY
-				|| bp.address == BPMEM_CLEARBBOX1
-				|| bp.address == BPMEM_CLEARBBOX2
-				|| bp.address == BPMEM_SETDRAWDONE
-				|| bp.address == BPMEM_PE_TOKEN_ID
-				|| bp.address == BPMEM_PE_TOKEN_INT_ID
-				|| bp.address == BPMEM_LOADTLUT0
-				|| bp.address == BPMEM_LOADTLUT1
-				|| bp.address == BPMEM_TEXINVALIDATE
-				|| bp.address == BPMEM_PRELOAD_MODE
-				|| bp.address == BPMEM_CLEAR_PIXEL_PERF))
+		if (!(bp.address == BPMEM_TRIGGER_EFB_COPY ||
+		      bp.address == BPMEM_CLEARBBOX1 ||
+		      bp.address == BPMEM_CLEARBBOX2 ||
+		      bp.address == BPMEM_SETDRAWDONE ||
+		      bp.address == BPMEM_PE_TOKEN_ID ||
+		      bp.address == BPMEM_PE_TOKEN_INT_ID ||
+		      bp.address == BPMEM_LOADTLUT0 ||
+		      bp.address == BPMEM_LOADTLUT1 ||
+		      bp.address == BPMEM_TEXINVALIDATE ||
+		      bp.address == BPMEM_PRELOAD_MODE ||
+		      bp.address == BPMEM_CLEAR_PIXEL_PERF))
 		{
 			return;
 		}
@@ -90,9 +91,9 @@ void BPWritten(const BPCmd& bp)
 	case BPMEM_GENMODE: // Set the Generation Mode
 		{
 			PRIM_LOG("genmode: texgen=%d, col=%d, multisampling=%d, tev=%d, cullmode=%d, ind=%d, zfeeze=%d",
-			bpmem.genMode.numtexgens, bpmem.genMode.numcolchans,
-			bpmem.genMode.multisampling, bpmem.genMode.numtevstages+1, bpmem.genMode.cullmode,
-			bpmem.genMode.numindstages, bpmem.genMode.zfreeze);
+			         bpmem.genMode.numtexgens, bpmem.genMode.numcolchans,
+			         bpmem.genMode.multisampling, bpmem.genMode.numtevstages+1, bpmem.genMode.cullmode,
+			         bpmem.genMode.numindstages, bpmem.genMode.zfreeze);
 
 			// Only call SetGenerationMode when cull mode changes.
 			if (bp.changes & 0xC000)
@@ -108,15 +109,15 @@ void BPWritten(const BPCmd& bp)
 	case BPMEM_IND_MTXA+6:
 	case BPMEM_IND_MTXB+6:
 	case BPMEM_IND_MTXC+6:
-		if(bp.changes)
+		if (bp.changes)
 			PixelShaderManager::SetIndMatrixChanged((bp.address - BPMEM_IND_MTXA) / 3);
 		break;
 	case BPMEM_RAS1_SS0: // Index Texture Coordinate Scale 0
-		if(bp.changes)
+		if (bp.changes)
 			PixelShaderManager::SetIndTexScaleChanged(false);
 		break;
 	case BPMEM_RAS1_SS1: // Index Texture Coordinate Scale 1
-		if(bp.changes)
+		if (bp.changes)
 			PixelShaderManager::SetIndTexScaleChanged(true);
 		break;
 	// ----------------
@@ -132,8 +133,8 @@ void BPWritten(const BPCmd& bp)
 		SetLineWidth();
 		break;
 	case BPMEM_ZMODE: // Depth Control
-		PRIM_LOG("zmode: test=%d, func=%d, upd=%d", bpmem.zmode.testenable, bpmem.zmode.func,
-		bpmem.zmode.updateenable);
+		PRIM_LOG("zmode: test=%d, func=%d, upd=%d", (int)bpmem.zmode.testenable,
+		         (int)bpmem.zmode.func, (int)bpmem.zmode.updateenable);
 		SetDepthMode();
 		break;
 	case BPMEM_BLENDMODE: // Blending Control
@@ -141,8 +142,9 @@ void BPWritten(const BPCmd& bp)
 			if (bp.changes & 0xFFFF)
 			{
 				PRIM_LOG("blendmode: en=%d, open=%d, colupd=%d, alphaupd=%d, dst=%d, src=%d, sub=%d, mode=%d",
-					bpmem.blendmode.blendenable, bpmem.blendmode.logicopenable, bpmem.blendmode.colorupdate, bpmem.blendmode.alphaupdate,
-					bpmem.blendmode.dstfactor, bpmem.blendmode.srcfactor, bpmem.blendmode.subtract, bpmem.blendmode.logicmode);
+				         (int)bpmem.blendmode.blendenable, (int)bpmem.blendmode.logicopenable, (int)bpmem.blendmode.colorupdate,
+				         (int)bpmem.blendmode.alphaupdate, (int)bpmem.blendmode.dstfactor, (int)bpmem.blendmode.srcfactor,
+				         (int)bpmem.blendmode.subtract, (int)bpmem.blendmode.logicmode);
 
 				// Set LogicOp Blending Mode
 				if (bp.changes & 0xF002) // logicopenable | logicmode
@@ -165,9 +167,9 @@ void BPWritten(const BPCmd& bp)
 	case BPMEM_CONSTANTALPHA: // Set Destination Alpha
 		{
 			PRIM_LOG("constalpha: alp=%d, en=%d", bpmem.dstalpha.alpha, bpmem.dstalpha.enable);
-			if(bp.changes & 0xFF)
+			if (bp.changes & 0xFF)
 				PixelShaderManager::SetDestAlpha();
-			if(bp.changes & 0x100)
+			if (bp.changes & 0x100)
 				SetBlendMode();
 			break;
 		}
@@ -267,7 +269,7 @@ void BPWritten(const BPCmd& bp)
 			u32 tlutTMemAddr = (bp.newvalue & 0x3FF) << 9;
 			u32 tlutXferCount = (bp.newvalue & 0x1FFC00) >> 5;
 
-			u8 *ptr = 0;
+			u8 *ptr = nullptr;
 
 			// TODO - figure out a cleaner way.
 			if (GetConfig(CONFIG_ISWII))
@@ -303,16 +305,18 @@ void BPWritten(const BPCmd& bp)
 			PixelShaderManager::SetFogColorChanged();
 		break;
 	case BPMEM_ALPHACOMPARE: // Compare Alpha Values
-		PRIM_LOG("alphacmp: ref0=%d, ref1=%d, comp0=%d, comp1=%d, logic=%d", bpmem.alpha_test.ref0,
-				bpmem.alpha_test.ref1, bpmem.alpha_test.comp0, bpmem.alpha_test.comp1, bpmem.alpha_test.logic);
-		if(bp.changes & 0xFFFF)
+		PRIM_LOG("alphacmp: ref0=%d, ref1=%d, comp0=%d, comp1=%d, logic=%d",
+		         (int)bpmem.alpha_test.ref0, (int)bpmem.alpha_test.ref1,
+		         (int)bpmem.alpha_test.comp0, (int)bpmem.alpha_test.comp1,
+		         (int)bpmem.alpha_test.logic);
+		if (bp.changes & 0xFFFF)
 			PixelShaderManager::SetAlpha();
-		if(bp.changes)
+		if (bp.changes)
 			g_renderer->SetColorMask();
 		break;
 	case BPMEM_BIAS: // BIAS
 		PRIM_LOG("ztex bias=0x%x", bpmem.ztex1.bias);
-		if(bp.changes)
+		if (bp.changes)
 			PixelShaderManager::SetZTextureBias();
 		break;
 	case BPMEM_ZTEX2: // Z Texture type
@@ -372,35 +376,15 @@ void BPWritten(const BPCmd& bp)
 	// -------------------------
 	case BPMEM_CLEARBBOX1:
 	case BPMEM_CLEARBBOX2:
+		// Don't compute bounding box if this frame is being skipped!
+		// Wrong but valid values are better than bogus values...
+		if (g_ActiveConfig.bUseBBox && !g_bSkipCurrentFrame)
 		{
-			if(g_ActiveConfig.bUseBBox)
-			{
-				// Don't compute bounding box if this frame is being skipped!
-				// Wrong but valid values are better than bogus values...
-				if(g_bSkipCurrentFrame)
-					break;
+			u8 offset = bp.address & 2;
 
-				if (bp.address == BPMEM_CLEARBBOX1)
-				{
-					int right = bp.newvalue >> 10;
-					int left = bp.newvalue & 0x3ff;
-
-					// We should only set these if bbox is calculated properly.
-					PixelEngine::bbox[0] = left;
-					PixelEngine::bbox[1] = right;
-					PixelEngine::bbox_active = true;
-				}
-				else
-				{
-					int bottom = bp.newvalue >> 10;
-					int top = bp.newvalue & 0x3ff;
-
-					// We should only set these if bbox is calculated properly.
-					PixelEngine::bbox[2] = top;
-					PixelEngine::bbox[3] = bottom;
-					PixelEngine::bbox_active = true;
-				}
-			}
+			PixelEngine::bbox[offset]     = bp.newvalue & 0x3ff;
+			PixelEngine::bbox[offset | 1] = bp.newvalue >> 10;
+			PixelEngine::bbox_active = true;
 		}
 		break;
 	case BPMEM_TEXINVALIDATE:
@@ -409,7 +393,7 @@ void BPWritten(const BPCmd& bp)
 
 	case BPMEM_ZCOMPARE:      // Set the Z-Compare and EFB pixel format
 		OnPixelFormatChange();
-		if(bp.changes & 7)
+		if (bp.changes & 7)
 		{
 			SetBlendMode(); // dual source could be activated by changing to PIXELFMT_RGBA6_Z24
 			g_renderer->SetColorMask(); // alpha writing needs to be disabled if the new pixel format doesn't have an alpha channel
@@ -443,7 +427,8 @@ void BPWritten(const BPCmd& bp)
 
 	case BPMEM_CLEAR_PIXEL_PERF:
 		// GXClearPixMetric writes 0xAAA here, Sunshine alternates this register between values 0x000 and 0xAAA
-		g_perf_query->ResetQuery();
+		if (PerfQueryBase::ShouldEmulate())
+			g_perf_query->ResetQuery();
 		break;
 
 	case BPMEM_PRELOAD_ADDR:
@@ -523,7 +508,7 @@ void BPWritten(const BPCmd& bp)
 		case BPMEM_SU_TSIZE+12:
 		case BPMEM_SU_SSIZE+14:
 		case BPMEM_SU_TSIZE+14:
-			if(bp.changes)
+			if (bp.changes)
 				PixelShaderManager::SetTexCoordChanged((bp.address - BPMEM_SU_SSIZE) >> 1);
 			break;
 		// ------------------------
@@ -578,9 +563,9 @@ void BPWritten(const BPCmd& bp)
 				// don't compare with changes!
 				int num = (bp.address >> 1) & 0x3;
 				if ((bp.address & 1) == 0)
-					PixelShaderManager::SetColorChanged(bpmem.tevregs[num].low.type, num);
+					PixelShaderManager::SetColorChanged(bpmem.tevregs[num].type_ra, num);
 				else
-					PixelShaderManager::SetColorChanged(bpmem.tevregs[num].high.type, num);
+					PixelShaderManager::SetColorChanged(bpmem.tevregs[num].type_bg, num);
 			}
 			break;
 

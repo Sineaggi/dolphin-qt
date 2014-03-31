@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -53,7 +53,6 @@
     <ClCompile Include="Boot\Boot_WiiWAD.cpp" />
     <ClCompile Include="Boot\ElfReader.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CoreParameter.cpp" />
     <ClCompile Include="CoreTiming.cpp" />
@@ -61,8 +60,8 @@
     <ClCompile Include="Debugger\Dump.cpp" />
     <ClCompile Include="Debugger\PPCDebugInterface.cpp" />
     <ClCompile Include="DSPEmulator.cpp" />
-    <ClCompile Include="DSP\assemble.cpp" />
-    <ClCompile Include="DSP\disassemble.cpp" />
+    <ClCompile Include="DSP\DSPAssembler.cpp" />
+    <ClCompile Include="DSP\DSPDisassembler.cpp" />
     <ClCompile Include="DSP\DSPAccelerator.cpp" />
     <ClCompile Include="DSP\DSPAnalyzer.cpp" />
     <ClCompile Include="DSP\DSPCodeUtil.cpp" />
@@ -107,19 +106,18 @@
     <ClCompile Include="HW\CPU.cpp" />
     <ClCompile Include="HW\DSP.cpp" />
     <ClCompile Include="HW\DSPHLE\DSPHLE.cpp" />
-    <ClCompile Include="HW\DSPHLE\HLEMixer.cpp" />
     <ClCompile Include="HW\DSPHLE\MailHandler.cpp" />
     <ClCompile Include="HW\DSPHLE\UCodes\UCodes.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_AX.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_AXWii.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_CARD.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_GBA.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_InitAudioSystem.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_ROM.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_Zelda.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_Zelda_ADPCM.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_Zelda_Synth.cpp" />
-    <ClCompile Include="HW\DSPHLE\UCodes\UCode_Zelda_Voice.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\AX.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\AXWii.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\CARD.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\GBA.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\INIT.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\ROM.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\Zelda.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\ZeldaADPCM.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\ZeldaSynth.cpp" />
+    <ClCompile Include="HW\DSPHLE\UCodes\ZeldaVoice.cpp" />
     <ClCompile Include="HW\DSPLLE\DSPDebugInterface.cpp" />
     <ClCompile Include="HW\DSPLLE\DSPHost.cpp" />
     <ClCompile Include="HW\DSPLLE\DSPLLE.cpp" />
@@ -145,6 +143,7 @@
     <ClCompile Include="HW\Memmap.cpp" />
     <ClCompile Include="HW\MemmapFunctions.cpp" />
     <ClCompile Include="HW\MemoryInterface.cpp" />
+    <ClCompile Include="HW\MMIO.cpp" />
     <ClCompile Include="HW\ProcessorInterface.cpp" />
     <ClCompile Include="HW\SI.cpp" />
     <ClCompile Include="HW\SI_Device.cpp" />
@@ -170,7 +169,6 @@
     <ClCompile Include="HW\WiimoteEmu\WiimoteEmu.cpp" />
     <ClCompile Include="HW\WiimoteReal\IOWin.cpp" />
     <ClCompile Include="HW\WiimoteReal\WiimoteReal.cpp" />
-    <ClCompile Include="HW\WII_IOB.cpp" />
     <ClCompile Include="HW\WII_IPC.cpp" />
     <ClCompile Include="IPC_HLE\ICMPWin.cpp" />
     <ClCompile Include="IPC_HLE\WiiMote_HID_Attr.cpp" />
@@ -258,7 +256,6 @@
     <ClInclude Include="Boot\ElfReader.h" />
     <ClInclude Include="Boot\ElfTypes.h" />
     <ClInclude Include="ConfigManager.h" />
-    <ClInclude Include="Console.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="CoreParameter.h" />
     <ClInclude Include="CoreTiming.h" />
@@ -267,8 +264,8 @@
     <ClInclude Include="Debugger\GCELF.h" />
     <ClInclude Include="Debugger\PPCDebugInterface.h" />
     <ClInclude Include="DSPEmulator.h" />
-    <ClInclude Include="DSP\assemble.h" />
-    <ClInclude Include="DSP\disassemble.h" />
+    <ClInclude Include="DSP\DSPAssembler.h" />
+    <ClInclude Include="DSP\DSPDisassembler.h" />
     <ClInclude Include="DSP\DSPAccelerator.h" />
     <ClInclude Include="DSP\DSPAnalyzer.h" />
     <ClInclude Include="DSP\DSPBreakpoints.h" />
@@ -307,18 +304,17 @@
     <ClInclude Include="HW\CPU.h" />
     <ClInclude Include="HW\DSP.h" />
     <ClInclude Include="HW\DSPHLE\DSPHLE.h" />
-    <ClInclude Include="HW\DSPHLE\HLEMixer.h" />
     <ClInclude Include="HW\DSPHLE\MailHandler.h" />
     <ClInclude Include="HW\DSPHLE\UCodes\UCodes.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_AX.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_AXStructs.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_AXWii.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_AX_Voice.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_CARD.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_GBA.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_InitAudioSystem.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_ROM.h" />
-    <ClInclude Include="HW\DSPHLE\UCodes\UCode_Zelda.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\AX.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\AXStructs.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\AXWii.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\AXVoice.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\CARD.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\GBA.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\INIT.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\ROM.h" />
+    <ClInclude Include="HW\DSPHLE\UCodes\Zelda.h" />
     <ClInclude Include="HW\DSPLLE\DSPDebugInterface.h" />
     <ClInclude Include="HW\DSPLLE\DSPLLE.h" />
     <ClInclude Include="HW\DSPLLE\DSPLLEGlobals.h" />
@@ -342,6 +338,8 @@
     <ClInclude Include="HW\HW.h" />
     <ClInclude Include="HW\Memmap.h" />
     <ClInclude Include="HW\MemoryInterface.h" />
+    <ClInclude Include="HW\MMIO.h" />
+    <ClInclude Include="HW\MMIOHandlers.h" />
     <ClInclude Include="HW\ProcessorInterface.h" />
     <ClInclude Include="HW\SI.h" />
     <ClInclude Include="HW\SI_Device.h" />
@@ -368,7 +366,6 @@
     <ClInclude Include="HW\WiimoteEmu\WiimoteHid.h" />
     <ClInclude Include="HW\WiimoteReal\WiimoteReal.h" />
     <ClInclude Include="HW\WiimoteReal\WiimoteRealBase.h" />
-    <ClInclude Include="HW\WII_IOB.h" />
     <ClInclude Include="HW\WII_IPC.h" />
     <ClInclude Include="IPC_HLE\fakepoll.h" />
     <ClInclude Include="IPC_HLE\hci.h" />

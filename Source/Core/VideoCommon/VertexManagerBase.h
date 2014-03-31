@@ -1,9 +1,7 @@
+#pragma once
 
-#ifndef _VERTEXMANAGERBASE_H
-#define _VERTEXMANAGERBASE_H
-
-#include "Common.h"
 #include <vector>
+#include "Common/Common.h"
 
 class NativeVertexFormat;
 class PointerWrap;
@@ -32,8 +30,6 @@ public:
 	// needs to be virtual for DX11's dtor
 	virtual ~VertexManager();
 
-	static void AddVertices(int _primitive, u32 _numVertices);
-
 	static u8 *s_pCurBufferPointer;
 	static u8 *s_pBaseBufferPointer;
 	static u8 *s_pEndBufferPointer;
@@ -51,27 +47,18 @@ public:
 	virtual void DestroyDeviceObjects(){};
 
 protected:
-	u16* GetIndexBuffer() { return &LocalIBuffer[0]; }
-	u8* GetVertexBuffer() { return &s_pBaseBufferPointer[0]; }
-
-	virtual void vDoState(PointerWrap& p) { DoStateShared(p); }
-	void DoStateShared(PointerWrap& p);
+	virtual void vDoState(PointerWrap& p) {  }
 
 	static PrimitiveType current_primitive_type;
 
-private:
-	bool IsFlushed() const;
+	virtual void ResetBuffer(u32 stride) = 0;
 
-	void ResetBuffer();
+private:
+	static bool IsFlushed;
 
 	//virtual void Draw(u32 stride, bool alphapass) = 0;
 	// temp
-	virtual void vFlush() = 0;
-
-	std::vector<u8> LocalVBuffer;
-	std::vector<u16> LocalIBuffer;
+	virtual void vFlush(bool useDstAlpha) = 0;
 };
 
 extern VertexManager *g_vertex_manager;
-
-#endif

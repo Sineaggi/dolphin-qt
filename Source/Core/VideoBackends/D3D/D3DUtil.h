@@ -2,10 +2,12 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#pragma	once
+#pragma once
 
 #include <d3d11.h>
-#include <MathUtil.h>
+#include <string>
+
+#include "Common/MathUtil.h"
 
 namespace DX11
 {
@@ -40,9 +42,9 @@ namespace D3D
 		int Init();
 		int Shutdown();
 		int DrawTextScaled(float x, float y,
-							float size,
-							float spacing, u32 dwColor,
-							const char* strText);
+		                   float size,
+		                   float spacing, u32 dwColor,
+		                   const std::string& text);
 	};
 
 	extern CD3DFont font;
@@ -62,7 +64,7 @@ namespace D3D
 						ID3D11InputLayout* layout,
 						float Gamma = 1.0f);
 	void drawShadedTexSubQuad(ID3D11ShaderResourceView* texture,
-							const MathUtil::Rectangle<float>* rSource,
+							const MathUtil::Rectangle<int>* rSource,
 							int SourceWidth,
 							int SourceHeight,
 							const MathUtil::Rectangle<float>* rDest,

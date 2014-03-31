@@ -2,12 +2,14 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#include "Common.h"
-#include "VideoCommon.h"
-#include "VertexLoader.h"
-#include "VertexLoader_TextCoord.h"
-#include "VertexManagerBase.h"
-#include "CPUDetect.h"
+#include "Common/Common.h"
+#include "Common/CPUDetect.h"
+
+#include "VideoCommon/VertexLoader.h"
+#include "VideoCommon/VertexLoader_TextCoord.h"
+#include "VideoCommon/VertexManagerBase.h"
+#include "VideoCommon/VideoCommon.h"
+
 
 #if _M_SSE >= 0x401
 #include <smmintrin.h>
@@ -41,13 +43,13 @@ void LOADERDECL TexCoord_Read_Dummy()
 }
 
 template <typename T>
-float TCScale(T val)
+float TCScale(T val, float scale)
 {
-	return val * tcScale[tcIndex];
+	return val * scale;
 }
 
 template <>
-float TCScale(float val)
+float TCScale(float val, float scale)
 {
 	return val;
 }
@@ -55,8 +57,12 @@ float TCScale(float val)
 template <typename T, int N>
 void LOADERDECL TexCoord_ReadDirect()
 {
+	auto const scale = tcScale[tcIndex];
+	DataWriter dst;
+	DataReader src;
+
 	for (int i = 0; i != N; ++i)
-		DataWrite(TCScale(DataRead<T>()));
+		dst.Write(TCScale(src.Read<T>(), scale));
 
 	LOG_TEX<N>();
 
@@ -71,9 +77,11 @@ void LOADERDECL TexCoord_ReadIndex()
 	auto const index = DataRead<I>();
 	auto const data = reinterpret_cast<const T*>(cached_arraybases[ARRAY_TEXCOORD0 + tcIndex]
 		+ (index * arraystrides[ARRAY_TEXCOORD0 + tcIndex]));
+	auto const scale = tcScale[tcIndex];
+	DataWriter dst;
 
 	for (int i = 0; i != N; ++i)
-		DataWrite(TCScale(Common::FromBigEndian(data[i])));
+		dst.Write(TCScale(Common::FromBigEndian(data[i]), scale));
 
 	LOG_TEX<N>();
 	++tcIndex;
@@ -124,11 +132,11 @@ void LOADERDECL TexCoord_ReadIndex_Float2_SSSE3()
 
 static TPipelineFunction tableReadTexCoord[4][8][2] = {
 	{
-		{NULL, NULL,},
-		{NULL, NULL,},
-		{NULL, NULL,},
-		{NULL, NULL,},
-		{NULL, NULL,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
+		{nullptr, nullptr,},
 	},
 	{
 		{TexCoord_ReadDirect<u8, 1>,  TexCoord_ReadDirect<u8, 2>,},

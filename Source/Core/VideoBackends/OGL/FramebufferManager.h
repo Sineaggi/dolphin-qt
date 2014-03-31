@@ -2,13 +2,13 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#ifndef _FRAMEBUFFERMANAGER_H_
-#define _FRAMEBUFFERMANAGER_H_
+#pragma once
 
-#include "GLUtil.h"
-#include "FramebufferManagerBase.h"
-#include "ProgramShaderCache.h"
-#include "Render.h"
+#include "VideoBackends/OGL/GLUtil.h"
+#include "VideoBackends/OGL/ProgramShaderCache.h"
+#include "VideoBackends/OGL/Render.h"
+
+#include "VideoCommon/FramebufferManagerBase.h"
 
 // On the GameCube, the game sends a request for the graphics processor to
 // transfer its internal EFB (Embedded Framebuffer) to an area in GameCube RAM
@@ -51,7 +51,7 @@ struct XFBSource : public XFBSourceBase
 
 	void CopyEFB(float Gamma) override;
 	void DecodeToTexture(u32 xfbAddr, u32 fbWidth, u32 fbHeight) override;
-	void Draw(const MathUtil::Rectangle<float> &sourcerc,
+	void Draw(const MathUtil::Rectangle<int> &sourcerc,
 		const MathUtil::Rectangle<float> &drawrc) const override;
 
 	const GLuint texture;
@@ -117,5 +117,3 @@ private:
 };
 
 }  // namespace OGL
-
-#endif
