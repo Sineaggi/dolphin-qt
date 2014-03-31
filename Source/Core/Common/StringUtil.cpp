@@ -462,7 +462,7 @@ template <typename T>
 std::string CodeToUTF8(const char* fromcode, const std::basic_string<T>& input)
 {
 	std::string result;
-	/*
+
 	iconv_t const conv_desc = iconv_open("UTF-8", fromcode);
 	if ((iconv_t)-1 == conv_desc)
 	{
@@ -510,7 +510,7 @@ std::string CodeToUTF8(const char* fromcode, const std::basic_string<T>& input)
 
 		iconv_close(conv_desc);
 	}
-	*/
+
 	return result;
 }
 
