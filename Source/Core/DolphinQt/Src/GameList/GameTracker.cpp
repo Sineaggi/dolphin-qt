@@ -1,8 +1,8 @@
 #include "GameTracker.h"
 
-#include "ConfigManager.h"
-#include "FileSearch.h"
-#include "CDUtils.h"
+#include "Core/ConfigManager.h"
+#include "Common/FileSearch.h"
+#include "Common/CDUtils.h"
 
 #include <QProgressDialog>
 #include <QComboBox>

@@ -5,7 +5,7 @@
 #include <QGroupBox>
 #include <QMap>
 
-#include "CommonTypes.h"
+#include "Common/CommonTypes.h"
 
 class QCheckBox;
 class QComboBox;

@@ -7,7 +7,7 @@
 #include <Foundation/Foundation.h>
 #include <IOKit/hid/IOHIDLib.h>
 #include <Cocoa/Cocoa.h>
-#include <wx/wx.h> // wxWidgets
+//#include <wx/wx.h> // wxWidgets
 
 #include "InputCommon/ControllerInterface/OSX/OSXKeyboard.h"
 
@@ -47,7 +47,7 @@ Keyboard::Keyboard(IOHIDDeviceRef device, std::string name, int index, void *win
 		CFRelease(elements);
 	}
 
-	m_windowid = [[(NSView *)(((wxWindow *)window)->GetHandle()) window] windowNumber];
+	//m_windowid = [[(NSView *)(((wxWindow *)window)->GetHandle()) window] windowNumber];
 
 	// cursor, with a hax for-loop
 	for (unsigned int i=0; i<4; ++i)

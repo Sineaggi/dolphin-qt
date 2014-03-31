@@ -2,7 +2,7 @@
 #include "ui_LogSettings.h"
 
 #include "LogWidgets.h"
-#include "LogManager.h"
+#include "Common/LogManager.h"
 
 #include <QRadioButton>
 

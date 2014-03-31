@@ -14,10 +14,10 @@
 #include "Util/Resources.h"
 #include "Config/ConfigMain.h"
 
-#include "BootManager.h"
-#include "Common.h"
-#include "ConfigManager.h"
-#include "Core.h"
+#include "Core/BootManager.h"
+#include "Common/Common.h"
+#include "Core/ConfigManager.h"
+#include "Core/Core.h"
 
 // TODO: Consider integrating Qt in to entire project through the use of Common features.
 

@@ -3,7 +3,8 @@
 
 #include <QtGlobal>
 #include <QThread>
-#include "Common.h"
+#include <QSysInfo>
+#include "Common/Common.h"
 
 DSystemInfo::DSystemInfo(QWidget *p) :
 	QDialog(p),
@@ -61,10 +62,10 @@ QString DSystemInfo::GetOS()
 	}
 #elif defined(Q_OS_MAC)
 	ret += "Mac OS X ";
-	switch(QSysInfo::MacVersion) {
-	case MV_10_7: ret += "10.7"; break;
-	case MV_10_8: ret += "10.8"; break;
-	case MV_10_9: ret += "10.9"; break;
+        switch(QSysInfo::MacintoshVersion) {
+	case QSysInfo::MV_10_7: ret += "10.7"; break;
+	case QSysInfo::MV_10_8: ret += "10.8"; break;
+	case QSysInfo::MV_10_9: ret += "10.9"; break;
 	default: ret += "(unknown)"; break;
 	}
 #elif defined(Q_OS_LINUX)

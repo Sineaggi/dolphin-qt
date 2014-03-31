@@ -6,7 +6,7 @@
 #include "Config/ConfigMain.h"
 #include "RenderWidget.h"
 
-#include <Core.h>
+#include <Core/Core.h>
 
 class DLogWindow;
 class DLogSettings;

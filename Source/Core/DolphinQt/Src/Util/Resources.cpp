@@ -1,8 +1,8 @@
 #include "Resources.h"
 
-#include "Volume.h"
-#include "FileUtil.h"
-#include "ConfigManager.h"
+#include "DiscIO/Volume.h"
+#include "Common/FileUtil.h"
+#include "Core/ConfigManager.h"
 
 QVector<QPixmap> Resources::platforms;
 QVector<QPixmap> Resources::regions;

@@ -9,7 +9,7 @@
 #include "ConfigGeneral.h"
 #include "../Util/Util.h"
 
-#include "ConfigManager.h"
+#include "Core/ConfigManager.h"
 
 
 QWidget* DConfigMainGeneralTab::CreateCoreTabWidget(QWidget* p)
@@ -71,7 +71,7 @@ QWidget* DConfigMainGeneralTab::CreateCoreTabWidget(QWidget* p)
 	ctrlManager->RegisterControl(cbCheats, Startup.bEnableCheats);
 
 	ctrlManager->RegisterControl(chFramelimit, SConfig::GetInstance().m_Framelimit);
-	ctrlManager->RegisterControl(cbFPSLimit, SConfig::GetInstance().b_UseFPS);
+	//ctrlManager->RegisterControl(cbFPSLimit, SConfig::GetInstance().b_UseFPS);
 
 	ctrlManager->RegisterControl(reinterpret_cast<QRadioButton*>(rbCPUEngine->button(0)), (Startup.iCPUCore == 0));
 	ctrlManager->RegisterControl(reinterpret_cast<QRadioButton*>(rbCPUEngine->button(1)), (Startup.iCPUCore == 1));
@@ -153,7 +153,7 @@ void DConfigMainGeneralTab::Apply()
 	Startup.bEnableCheats = cbCheats->isChecked();
 
 	SConfig::GetInstance().m_Framelimit = chFramelimit->currentIndex();
-	SConfig::GetInstance().b_UseFPS = cbFPSLimit->isChecked();
+	//SConfig::GetInstance().b_UseFPS = cbFPSLimit->isChecked();
 
 	Startup.iCPUCore = rbCPUEngine->checkedId();
 

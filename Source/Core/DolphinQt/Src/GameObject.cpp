@@ -8,21 +8,21 @@
 #include <QFileInfo>
 #include "Util/Resources.h"
 
-#include "Common.h"
-#include "CommonPaths.h"
+#include "Common/Common.h"
+#include "Common/CommonPaths.h"
 
-#include "FileUtil.h"
+#include "Common/FileUtil.h"
 #include "GameObject.h"
-#include "StringUtil.h"
-#include "Hash.h"
-#include "IniFile.h"
+#include "Common/StringUtil.h"
+#include "Common/Hash.h"
+#include "Common/IniFile.h"
 
-#include "Filesystem.h"
-#include "BannerLoader.h"
-#include "FileSearch.h"
-#include "CompressedBlob.h"
-#include "ChunkFile.h"
-#include "ConfigManager.h"
+#include "DiscIO/Filesystem.h"
+#include "DiscIO/BannerLoader.h"
+#include "Common/FileSearch.h"
+#include "DiscIO/CompressedBlob.h"
+#include "Common/ChunkFile.h"
+#include "Core/ConfigManager.h"
 
 static const u32 CACHE_REVISION = 0x115;
 

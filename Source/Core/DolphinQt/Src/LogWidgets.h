@@ -1,7 +1,7 @@
 #include <QDockWidget>
 #include <QList>
 
-#include "LogManager.h"
+#include "Common/LogManager.h"
 
 class QCheckBox;
 class QRadioButton;
