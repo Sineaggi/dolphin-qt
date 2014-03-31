@@ -1,5 +1,3 @@
-message ("WX Really should be disabled at this point.")
-
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	option(SKIP_POSTPROCESS_BUNDLE "Skip postprocessing bundle for redistributability" OFF)
 endif()

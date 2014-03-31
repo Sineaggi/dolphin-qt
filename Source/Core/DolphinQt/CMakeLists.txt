@@ -30,6 +30,66 @@ set(LIBS    core
             sfml-network
             ${OPENGL_LIBRARIES})
 
+if(NOT ANDROID)
+	link_directories(${CMAKE_PREFIX_PATH}/lib)
+endif()
+
+if(WIN32)
+	set(SRCS ${SRCS} stdafx.cpp)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	# Link against OS X system frameworks.
+	list(APPEND LIBS
+		${APPKIT_LIBRARY}
+		${AU_LIBRARY}
+		${COREAUDIO_LIBRARY}
+		${COREFUND_LIBRARY}
+		${CORESERV_LIBRARY}
+		${IOB_LIBRARY}
+		${IOK_LIBRARY}
+		${FORCEFEEDBACK}
+		)
+	if(wxWidgets_FOUND)
+		list(APPEND LIBS
+			${APPSERV_LIBRARY}
+			${COCOA_LIBRARY}
+			)
+	endif()
+	# Add resource files to application bundle.
+	set(RESOURCES resources/Dolphin.icns)
+	list(APPEND SRCS ${RESOURCES})
+	set_source_files_properties(${RESOURCES} PROPERTIES
+		MACOSX_PACKAGE_LOCATION Resources)
+elseif(USE_X11)
+	set(SRCS ${SRCS} X11Utils.cpp)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR
+        ${CMAKE_SYSTEM_NAME} MATCHES "NetBSD")
+	set(LIBS ${LIBS} usbhid)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set(DOLPHIN_EXE_BASE Dolphin)
+else()
+	set(DOLPHIN_EXE_BASE dolphin-emu)
+endif()
+if(wxWidgets_FOUND)
+	set(DOLPHIN_EXE ${DOLPHIN_EXE_BASE})
+else()
+	set(DOLPHIN_EXE ${DOLPHIN_EXE_BASE}-nogui)
+endif()
+
+if(USE_UPNP)
+  set(LIBS  ${LIBS} miniupnpc)
+endif()
+
+include(FindGettext)
+if(GETTEXT_MSGMERGE_EXECUTABLE AND GETTEXT_MSGFMT_EXECUTABLE AND wxWidgets_FOUND)
+	file(GLOB LINGUAS ${CMAKE_SOURCE_DIR}/Languages/po/*.po)
+	add_custom_target(translations ALL)
+	GETTEXT_CREATE_TRANSLATIONS(${CMAKE_SOURCE_DIR}/Languages/po/dolphin-emu.pot ${LINGUAS})
+endif()
+
 if(USE_EGL)
 	set(SRCS ${SRCS} ../DolphinWX/GLInterface/Platform.cpp
 		../DolphinWX/GLInterface/EGL.cpp)
@@ -67,6 +127,10 @@ else(SDL2_FOUND)
 endif()
 
 set(EXEGUI dolphin-emu-qt)
+
+if(LIBAV_FOUND)
+	set(LIBS	${LIBS} ${LIBAV_LIBRARIES})
+endif()
 
 qt_moc(MOC_SRCS Src/Config/ConfigAudio.h
                 Src/Config/ConfigGeneral.h
